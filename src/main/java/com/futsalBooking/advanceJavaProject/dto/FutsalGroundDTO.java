@@ -1,6 +1,5 @@
 package com.futsalBooking.advanceJavaProject.dto;
 
-import com.futsalBooking.advanceJavaProject.model.Futsal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

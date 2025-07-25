@@ -1,5 +1,7 @@
 package com.futsalBooking.advanceJavaProject.service;
 
+import com.futsalBooking.advanceJavaProject.DTOMapper.FutsalDTOMapper;
+import com.futsalBooking.advanceJavaProject.DTOMapper.FutsalGroundDTOMapper;
 import com.futsalBooking.advanceJavaProject.dto.FutsalDto;
 import com.futsalBooking.advanceJavaProject.dto.FutsalGroundDTO;
 import com.futsalBooking.advanceJavaProject.model.Futsal;
@@ -29,30 +31,16 @@ public class FutsalGroundServiceImplementation implements FutsalGround {
 
     @Override
     public FutsalGroundDTO add(Futsal_Ground futsal_Ground, Authentication authentication) {
+        FutsalGroundDTOMapper mapper = new FutsalGroundDTOMapper();
         Optional<Users> users = usersServiceRepository.findByPhoneNumber(authentication.getName());
-        FutsalDto futsalDto = new FutsalDto();
-        FutsalGroundDTO futsalGroundDTO = new FutsalGroundDTO();
+
         if (users.isPresent()) {
             Users user = users.get();
             Futsal futsal = user.getFutsal();
 
-
-            futsalDto.setId(futsal.getId());
-            futsalDto.setFutsalName(futsal.getFutsalName());
-            futsalDto.setFutsalAddress(futsal.getFutsalAddress());
-            futsalDto.setFutsalOpeningHours(futsal.getFutsalOpeningHours());
-            futsalDto.setFutsalClosingHours(futsal.getFutsalClosingHours());
-            futsalDto.setDescription(futsal.getDescription());
-
             futsal_Ground.setFutsal(futsal);
             Futsal_Ground savedGround = futsalGroundServiceRepository.save(futsal_Ground);
 
-
-            futsalGroundDTO.setFutsalDto(futsalDto);
-            futsalGroundDTO.setId(savedGround.getId());
-            futsalGroundDTO.setPricePerHour(savedGround.getPricePerHour());
-            futsalGroundDTO.setImage(savedGround.getImage());
-            futsalGroundDTO.setGroundType(savedGround.getGroundType());
 
             List<Futsal_Ground> existingGrounds = futsal.getFutsalGroundList();
             if (existingGrounds == null) {
@@ -62,10 +50,31 @@ public class FutsalGroundServiceImplementation implements FutsalGround {
             futsal.setFutsalGroundList(existingGrounds);
             futsalServiceRepository.save(futsal);
 
-            return futsalGroundDTO;
+            return mapper.convertToFutsalGroundDTO(savedGround,user.getFutsal());
         }
 
         return null;
     }
+
+    @Override
+    public List<FutsalGroundDTO> getFutsalGroundList(Authentication authentication) {
+        List<FutsalGroundDTO> futsalGroundDTOList = new ArrayList<>();
+        Users user = usersServiceRepository.findByPhoneNumber(authentication.getName())
+                .orElseThrow();
+
+        List<Futsal_Ground> futsalGroundList=futsalGroundServiceRepository.findByFutsal_id(user.getFutsal().getId());
+        if (futsalGroundList != null) {
+            for (Futsal_Ground futsalGround : futsalGroundList) {
+                FutsalGroundDTOMapper mapper = new FutsalGroundDTOMapper();
+                FutsalDTOMapper futsalDTOMapper = new FutsalDTOMapper();
+                FutsalGroundDTO futsalGroundDTO=mapper.groundDTO(futsalGround);
+                futsalGroundDTO.setFutsalDto(futsalDTOMapper.getFutsalDto(user.getFutsal()));
+                futsalGroundDTOList.add(futsalGroundDTO);
+            }
+        }
+
+        return futsalGroundDTOList;
+    }
+
 
 }

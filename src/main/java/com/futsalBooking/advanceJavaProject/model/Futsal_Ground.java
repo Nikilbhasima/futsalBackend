@@ -20,7 +20,7 @@ public class Futsal_Ground {
     private String image;
 
     @ManyToOne
-    @JoinColumn(name = "futsal_id")
+    @JoinColumn(name = "futsal_Id")
     private Futsal futsal;
 
     @OneToMany(mappedBy = "futsal_ground",fetch = FetchType.EAGER)

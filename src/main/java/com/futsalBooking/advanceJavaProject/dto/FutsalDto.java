@@ -19,5 +19,5 @@ public class FutsalDto {
     private String description;
     private String futsalOpeningHours;
     private String futsalClosingHours;
-    private List<Futsal_Ground> futsalGroundList;
+    private List<FutsalGroundDTO> futsalGroundList;
 }
