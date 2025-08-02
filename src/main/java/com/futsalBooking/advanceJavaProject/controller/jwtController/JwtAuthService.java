@@ -41,6 +41,7 @@ public class JwtAuthService {
     private JwtService JwtService;
 
     public JwtAuthResponse register(AuthRegisterRequest request) {
+        System.out.println(request.getRole());
         Users user =new Users();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
@@ -55,20 +56,23 @@ public class JwtAuthService {
         if(users.isEmpty()){
             List<Role> role1=roleServiceRepository.findAll();
             roles.addAll(role1);
-        }else {
-
+        }else{
             if(request.getRole().equals("ROLE_OWNER")){
-                List<Role> role1=roleServiceRepository.findAll();
-                role1.remove(0);
-                roles.addAll(role1);
-            }
-            if(request.getRole().equals("ROLE_USER")){
-                Optional<Role> roleExists = roleServiceRepository.findByRole("ROLE_USER");
+                System.out.println(request.getRole());
+                Optional<Role> roleExists = roleServiceRepository.findByRole("ROLE_OWNER");
                 if(roleExists.isPresent()) {
                     role = roleExists.get();
                     roles.add(role);
                 }
             }
+            if(request.getRole().equals("ROLE_USER")){
+                System.out.println(request.getRole());
+                Optional<Role> roleExists = roleServiceRepository.findByRole("ROLE_USER");
+                if(roleExists.isPresent()) {
+                    role = roleExists.get();
+                    roles.add(role);
+                }
+        }
 
         }
 

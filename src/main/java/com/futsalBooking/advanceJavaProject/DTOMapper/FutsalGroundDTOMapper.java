@@ -4,7 +4,9 @@ import com.futsalBooking.advanceJavaProject.dto.FutsalDto;
 import com.futsalBooking.advanceJavaProject.dto.FutsalGroundDTO;
 import com.futsalBooking.advanceJavaProject.model.Futsal;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Ground;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FutsalGroundDTOMapper {
 
     public FutsalGroundDTO convertToFutsalGroundDTO(Futsal_Ground ground, Futsal futsal) {

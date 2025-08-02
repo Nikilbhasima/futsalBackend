@@ -13,4 +13,7 @@ import java.util.List;
 public interface FutsalGroundServiceRepository extends JpaRepository<Futsal_Ground,Integer> { List<Futsal_Ground> findByFutsal(Futsal futsal);
     @Query("SELECT f FROM Futsal_Ground f WHERE f.futsal.id = :futsalId")
     List<Futsal_Ground> findByFutsal_id(@Param("futsalId") int futsalId);
+
+    @Query("SELECT f FROM Futsal_Ground f WHERE f.futsal.id = :futsalId")
+    Futsal_Ground findByFutsalId(@Param("futsalId") int futsalId);
 }

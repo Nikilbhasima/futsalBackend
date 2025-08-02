@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -52,6 +53,19 @@ public class FutsalServiceImplementation implements FutsalService {
         Users user = usersServiceRepository.findByPhoneNumber(authentication.getName())
                 .orElseThrow();
         return futsalDTOMapper.mapFutsalDto(user.getFutsal());
+    }
+
+    @Override
+    public FutsalDto getFutsalById(int id) {
+        Futsal futsal=futsalServiceRepository.findById(id).orElseThrow();
+        return futsalDTOMapper.mapFutsalDto(futsal);
+    }
+
+    @Override
+    public List<FutsalDto> getAllFutsalList() {
+        List<Futsal> futsalList = futsalServiceRepository.findAll();
+
+        return futsalDTOMapper.getFutsalDtoList(futsalList);
     }
 
 }

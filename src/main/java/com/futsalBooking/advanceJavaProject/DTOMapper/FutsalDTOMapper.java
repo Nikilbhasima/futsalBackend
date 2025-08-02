@@ -17,8 +17,12 @@ public class FutsalDTOMapper {
 
     @Autowired
     private FutsalServiceRepository futsalServiceRepository;
+
     @Autowired
     private FutsalGroundServiceRepository futsalGroundServiceRepository;
+
+    @Autowired
+    private FutsalGroundDTOMapper futsalGroundDTOMapper;
 
     public FutsalDto mapFutsalDto(Futsal futsal) {
         FutsalGroundDTOMapper futsalGroundDTOMapper = new FutsalGroundDTOMapper();
@@ -51,7 +55,27 @@ public class FutsalDTOMapper {
         futsalDto.setFutsalName(futsal.getFutsalName());
         futsalDto.setFutsalAddress(futsal.getFutsalAddress());
         futsalDto.setDescription(futsal.getDescription());
+        futsalDto.setFutsalOpeningHours(futsal.getFutsalOpeningHours());
+        futsalDto.setFutsalClosingHours(futsal.getFutsalClosingHours());
         return futsalDto;
+    }
+
+
+    public List<FutsalDto> getFutsalDtoList(List<Futsal> futsalList) {
+
+        List<FutsalDto> futsalDtoList=new ArrayList<>();
+        for(Futsal futsal:futsalList){
+            FutsalDto futsalDto=getFutsalDto(futsal);
+           List<Futsal_Ground> futsalGroundDTOList=futsalGroundServiceRepository.findByFutsal_id(futsal.getId());
+           List<FutsalGroundDTO> futsalGroundDTOList2=new ArrayList<>();
+           for (Futsal_Ground futsalGround : futsalGroundDTOList) {
+               futsalGroundDTOList2.add(futsalGroundDTOMapper.groundDTO(futsalGround));
+           }
+           futsalDto.setFutsalGroundList(futsalGroundDTOList2);
+            futsalDtoList.add(futsalDto);
+        }
+
+        return futsalDtoList;
     }
 
 

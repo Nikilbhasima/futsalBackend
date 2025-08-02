@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/futsal")
 public class FutsalController {
@@ -31,5 +33,16 @@ public class FutsalController {
         return ResponseEntity.status(HttpStatus.CREATED).body(futsalDto);
     }
 
+    @GetMapping("/getAllFutsal")
+    public ResponseEntity<List<FutsalDto> > getAllFutsal(){
+        List<FutsalDto> futsalDtoList = futsalServiceImplementation.getAllFutsalList();
+        return ResponseEntity.ok(futsalDtoList);
+    }
+    @GetMapping("/getFutsalById/{futsalId}")
+    public ResponseEntity<FutsalDto> getFutsal(@PathVariable("futsalId") int id){
+        System.out.println("get futsal id "+id);
+        FutsalDto futsalDto = futsalServiceImplementation.getFutsalById(id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(futsalDto);
+    }
 
 }

@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
         @PostMapping("/login")
         public ResponseEntity<JwtAuthResponse> authenticate (@RequestBody JwtAuthRequest request) {
-            System.out.println(request.getPassword());
-            System.out.println(request.getEmailOrMobile());
+            System.out.println("data has arrived"+request.getPassword());
+            System.out.println("data has arrived"+request.getEmailOrMobile());
             return ResponseEntity.ok(jwtAuthService.authenticate(request));
         }
 }
