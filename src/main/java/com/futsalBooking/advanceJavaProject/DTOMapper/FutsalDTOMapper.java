@@ -27,7 +27,7 @@ public class FutsalDTOMapper {
     public FutsalDto mapFutsalDto(Futsal futsal) {
         FutsalGroundDTOMapper futsalGroundDTOMapper = new FutsalGroundDTOMapper();
         List<Futsal_Ground> futsalGroundList=futsalGroundServiceRepository.findByFutsal_id(futsal.getId());
-        System.out.println("-------------------"+futsalGroundList);
+
         FutsalDto futsalDto=new FutsalDto();
 
         futsalDto.setId(futsal.getId());

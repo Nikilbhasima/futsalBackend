@@ -26,7 +26,6 @@ public class Futsal_Ground {
     @OneToMany(mappedBy = "futsal_ground",fetch = FetchType.EAGER)
     private List<Futsal_Booking> futsalBookings;
 
-    @OneToMany(mappedBy = "ground",fetch = FetchType.EAGER)
-    private List<Bookings> bookings;
+
 
 }

@@ -3,6 +3,9 @@ package com.futsalBooking.advanceJavaProject.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 @Getter
 @Setter
@@ -15,11 +18,11 @@ public class Bookings {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String bookingDate;
+    private LocalDate bookingDate;
 
-    private String startingTime;
-    private String endingTime;
-    private String playingDate;
+    private LocalTime startingTime;
+    private LocalTime endingTime;
+    private LocalDate playingDate;
 
     private String status;
 
@@ -27,7 +30,5 @@ public class Bookings {
     @JoinColumn(name = "userId")
     private Users user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "groundId")
-    private Futsal_Ground ground;
+
 }

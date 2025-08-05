@@ -61,6 +61,8 @@ public class FutsalServiceImplementation implements FutsalService {
         return futsalDTOMapper.mapFutsalDto(futsal);
     }
 
+
+
     @Override
     public List<FutsalDto> getAllFutsalList() {
         List<Futsal> futsalList = futsalServiceRepository.findAll();

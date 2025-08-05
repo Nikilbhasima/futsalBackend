@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,6 @@ public class FutsalGroundDTO {
     private float pricePerHour;
     private String image;
     private FutsalDto futsalDto;
+    private List<BookingDTO> bookingDTOS;
 
 }

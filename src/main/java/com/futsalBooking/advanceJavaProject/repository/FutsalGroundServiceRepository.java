@@ -2,6 +2,7 @@ package com.futsalBooking.advanceJavaProject.repository;
 
 import com.futsalBooking.advanceJavaProject.model.Futsal;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Ground;
+import com.futsalBooking.advanceJavaProject.service.FutsalBooking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +17,6 @@ public interface FutsalGroundServiceRepository extends JpaRepository<Futsal_Grou
 
     @Query("SELECT f FROM Futsal_Ground f WHERE f.futsal.id = :futsalId")
     Futsal_Ground findByFutsalId(@Param("futsalId") int futsalId);
+
+
 }
