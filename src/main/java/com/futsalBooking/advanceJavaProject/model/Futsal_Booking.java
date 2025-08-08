@@ -21,6 +21,7 @@ public class Futsal_Booking {
     private LocalTime ending_time;
     private LocalDate booking_date;
     private String status;
+    private String bookingType;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ground_id")

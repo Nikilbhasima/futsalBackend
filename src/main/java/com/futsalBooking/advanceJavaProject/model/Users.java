@@ -34,8 +34,4 @@ public class Users {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Futsal_Booking> futsalBookings;
 
-    @OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
-    private List<Bookings> bookings;
-
-
 }

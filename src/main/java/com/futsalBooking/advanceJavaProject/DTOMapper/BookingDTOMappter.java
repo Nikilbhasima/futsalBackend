@@ -1,9 +1,7 @@
 package com.futsalBooking.advanceJavaProject.DTOMapper;
 
 import com.futsalBooking.advanceJavaProject.dto.BookingDTO;
-import com.futsalBooking.advanceJavaProject.model.Bookings;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Booking;
-import com.futsalBooking.advanceJavaProject.model.Futsal_Ground;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -30,6 +28,7 @@ public class BookingDTOMappter {
         bookingDTO1.setBooking_date(bookingDTO.getBooking_date());
         bookingDTO1.setStatus(bookingDTO.getStatus());
         bookingDTO1.setEnding_time(bookingDTO.getEnding_time());
+        bookingDTO1.setStatus(bookingDTO.getStatus());
 
         return bookingDTO1;
     }

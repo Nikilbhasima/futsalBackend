@@ -1,7 +1,11 @@
 package com.futsalBooking.advanceJavaProject.service;
 
 import com.futsalBooking.advanceJavaProject.DTOMapper.BookingDTOMappter;
+import com.futsalBooking.advanceJavaProject.DTOMapper.FutsalDTOMapper;
+import com.futsalBooking.advanceJavaProject.DTOMapper.FutsalGroundDTOMapper;
 import com.futsalBooking.advanceJavaProject.dto.BookingDTO;
+import com.futsalBooking.advanceJavaProject.dto.FutsalDto;
+import com.futsalBooking.advanceJavaProject.dto.FutsalGroundDTO;
 import com.futsalBooking.advanceJavaProject.model.Futsal;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Booking;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Ground;
@@ -14,9 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class FutsalBookingServiceImplementation implements FutsalBooking {
@@ -31,7 +37,16 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
     private FutsalGroundServiceRepository futsalGroundServiceRepository;
 
     @Autowired
+    private FutsalServiceRepository futsalServiceRepository;
+
+    @Autowired
     private BookingDTOMappter bookingDTOMappter;
+
+    @Autowired
+    private FutsalGroundDTOMapper futsalGroundDTOMapper;
+
+    @Autowired
+    private FutsalDTOMapper futsalDTOMapper;
 
     public BookingDTO bookFutsal(Authentication authentication, Futsal_Booking futsal_Booking, int groundId) {
         Users user=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
@@ -41,6 +56,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         saveBooking.setChallenger_id(user);
         saveBooking.setFutsal_ground(futsal_ground);
         saveBooking.setStatus("pending");
+        saveBooking.setBookingType(futsal_Booking.getBookingType());
         saveBooking.setPlaying_date(futsal_Booking.getPlaying_date());
         saveBooking.setStarting_time(futsal_Booking.getStarting_time());
         saveBooking.setEnding_time(futsal_Booking.getEnding_time());
@@ -54,4 +70,32 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findBookingsByGroundId(groundId,playingDate);
         return bookingDTOMappter.getBookingDTOs(futsalBooking);
     }
+
+    public List<BookingDTO> bookingByUserId(Authentication authentication, String bookingType) {
+        Users user = usersServiceRepository.findByPhoneNumber(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Futsal_Booking> futsalBookings = futsalBookingServiceeRepository.findByChallenger_id(user.getId(), bookingType);
+        LocalDate today = LocalDate.now();
+        List<BookingDTO> bookingDTOS = new ArrayList<>();
+
+        for (Futsal_Booking booking : futsalBookings) {
+            if (today.isAfter(booking.getPlaying_date())) {
+                booking.setStatus("completed");
+                booking = futsalBookingServiceeRepository.save(booking);
+            }
+            Futsal_Ground ground=futsalGroundServiceRepository.findById(booking.getFutsal_ground().getId()).orElseThrow(()-> new RuntimeException("Ground not found"));
+            FutsalGroundDTO futsalGroundDTO=futsalGroundDTOMapper.groundDTO(ground);
+            Futsal futsal=futsalServiceRepository.findById(ground.getFutsal().getId()).orElseThrow(()-> new RuntimeException("futsal not found"));
+            FutsalDto futsalDto=futsalDTOMapper.getFutsalDto(futsal);
+            futsalGroundDTO.setFutsalDto(futsalDto);
+            BookingDTO dto = bookingDTOMappter.getBookingDTO(booking);
+            dto.setFutsalGroundDTO(futsalGroundDTO);
+            bookingDTOS.add(dto);
+            System.out.println("booking id " + booking.getId() + ":" + booking.getBooking_date() + " booking status:" + booking.getStatus());
+        }
+
+        return bookingDTOS;
+    }
+
 }

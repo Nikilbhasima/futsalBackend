@@ -19,5 +19,7 @@ public class BookingDTO {
     private LocalTime ending_time;
     private LocalDate booking_date;
     private String status;
+    private FutsalGroundDTO futsalGroundDTO;
+
 
 }

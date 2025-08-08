@@ -22,8 +22,18 @@ public class BookingController {
 
     @PostMapping("/bookFutsal/{groundId}")
     public ResponseEntity<BookingDTO> bookFutsal(Authentication authentication, @RequestBody Futsal_Booking futsal_Booking, @PathVariable("groundId") int groundId) {
-         BookingDTO bookingDTO = futsalBookingServiceImplementation.bookFutsal(authentication,futsal_Booking,groundId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
+        System.out.println(futsal_Booking.getBookingType());
+        System.out.println(futsal_Booking.getStarting_time());
+        System.out.println(futsal_Booking.getEnding_time());
+        if(futsal_Booking.getBookingType().equals("book")){
+            BookingDTO bookingDTO = futsalBookingServiceImplementation.bookFutsal(authentication,futsal_Booking,groundId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
+        }
+        if(futsal_Booking.getBookingType().equals("challenge")){
+            BookingDTO bookingDTO = futsalBookingServiceImplementation.bookFutsal(authentication,futsal_Booking,groundId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
     }
 
@@ -33,5 +43,12 @@ public class BookingController {
         System.out.println("get futsal id "+bookingDate);
         List<BookingDTO> bookingDTOS= futsalBookingServiceImplementation.findBookingsByGroundId(slotId,bookingDate);
         return ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
+    }
+
+    @GetMapping("/getBookingsByUserId/{bookingType}")
+    public ResponseEntity<List<BookingDTO>>  getBookingsByUserId(Authentication authentication, @PathVariable("bookingType") String bookingType){
+    List<BookingDTO> bookingDTOS=futsalBookingServiceImplementation.bookingByUserId(authentication,bookingType);
+    return ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
+
     }
 }
