@@ -3,6 +3,7 @@ package com.futsalBooking.advanceJavaProject.controller.bookingController;
 import com.futsalBooking.advanceJavaProject.dto.BookingDTO;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Booking;
 import com.futsalBooking.advanceJavaProject.service.FutsalBookingServiceImplementation;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,14 @@ public class BookingController {
     public ResponseEntity<List<BookingDTO>>  getBookingsByUserId(Authentication authentication, @PathVariable("bookingType") String bookingType){
     List<BookingDTO> bookingDTOS=futsalBookingServiceImplementation.bookingByUserId(authentication,bookingType);
     return ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
+    }
 
+    @DeleteMapping("/cancalFutsalBooking/{groundId}")
+    public ResponseEntity<String> cancelFutsalBooking(@PathVariable("groundId") int groundId) {
+        if (futsalBookingServiceImplementation.cancelFutsalBooking(groundId)
+        ) {
+            return ResponseEntity.status(HttpStatus.OK).body("cancelled");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Booking not found");
     }
 }

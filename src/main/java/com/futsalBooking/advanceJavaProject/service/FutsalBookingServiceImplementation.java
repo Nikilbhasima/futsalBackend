@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class FutsalBookingServiceImplementation implements FutsalBooking {
 
@@ -96,6 +98,19 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         }
 
         return bookingDTOS;
+    }
+
+    @Override
+    public boolean cancelFutsalBooking(int groundId) {
+        Optional<Futsal_Booking> bookingOpt = futsalBookingServiceeRepository.findById(groundId);
+        if(bookingOpt.isEmpty()){
+            return false;
+        }
+        Futsal_Booking booking = bookingOpt.get();
+        booking.setStatus("cancelled");
+        futsalBookingServiceeRepository.save(booking);
+        return true;
+
     }
 
 }
