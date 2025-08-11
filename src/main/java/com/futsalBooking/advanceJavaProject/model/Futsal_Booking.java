@@ -21,6 +21,8 @@ public class Futsal_Booking {
     private LocalTime ending_time;
     private LocalDate booking_date;
     private String status;
+    private String matchPaymentType;
+    private String contactForMatch;
     private String bookingType;
 
     @ManyToOne(fetch = FetchType.EAGER)

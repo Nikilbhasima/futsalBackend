@@ -31,7 +31,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/v1/**","/api/futsal/getAllFutsal","/api/futsal/getFutsalById/**","/api/bookings/getFutsalSlot/**").permitAll()
+                        .requestMatchers("/api/v1/**",
+                                "/api/futsal/getAllFutsal",
+                                "/api/futsal/getFutsalById/**",
+                                "/api/bookings/getFutsalSlot/**",
+                                "/api/bookings/getListOfFutsalChallenge")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

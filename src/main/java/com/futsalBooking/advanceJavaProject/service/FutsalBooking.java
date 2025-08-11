@@ -2,6 +2,7 @@ package com.futsalBooking.advanceJavaProject.service;
 
 import com.futsalBooking.advanceJavaProject.dto.BookingDTO;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Booking;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
@@ -16,4 +17,6 @@ public interface FutsalBooking {
     public List<BookingDTO> bookingByUserId(Authentication authentication, String bookingType);
 
     public boolean cancelFutsalBooking(int groundId);
+
+    public List<BookingDTO> getListOfFutsalChallenge();
 }

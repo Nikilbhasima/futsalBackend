@@ -60,4 +60,11 @@ public class BookingController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Booking not found");
     }
+
+    @GetMapping("/getListOfFutsalChallenge")
+    public ResponseEntity<List<BookingDTO>> getListOfFutsalChallenge(){
+        List<BookingDTO> bookingDTOS= futsalBookingServiceImplementation.getListOfFutsalChallenge();
+
+        return  ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
+    }
 }

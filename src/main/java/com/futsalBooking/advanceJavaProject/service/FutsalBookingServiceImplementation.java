@@ -3,9 +3,11 @@ package com.futsalBooking.advanceJavaProject.service;
 import com.futsalBooking.advanceJavaProject.DTOMapper.BookingDTOMappter;
 import com.futsalBooking.advanceJavaProject.DTOMapper.FutsalDTOMapper;
 import com.futsalBooking.advanceJavaProject.DTOMapper.FutsalGroundDTOMapper;
+import com.futsalBooking.advanceJavaProject.DTOMapper.UserDTOMappter;
 import com.futsalBooking.advanceJavaProject.dto.BookingDTO;
 import com.futsalBooking.advanceJavaProject.dto.FutsalDto;
 import com.futsalBooking.advanceJavaProject.dto.FutsalGroundDTO;
+import com.futsalBooking.advanceJavaProject.dto.UserDTO;
 import com.futsalBooking.advanceJavaProject.model.Futsal;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Booking;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Ground;
@@ -49,6 +51,8 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
     @Autowired
     private FutsalDTOMapper futsalDTOMapper;
+    @Autowired
+    private UserDTOMappter userDTOMappter;
 
     public BookingDTO bookFutsal(Authentication authentication, Futsal_Booking futsal_Booking, int groundId) {
         Users user=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
@@ -62,6 +66,8 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         saveBooking.setPlaying_date(futsal_Booking.getPlaying_date());
         saveBooking.setStarting_time(futsal_Booking.getStarting_time());
         saveBooking.setEnding_time(futsal_Booking.getEnding_time());
+        saveBooking.setMatchPaymentType(futsal_Booking.getMatchPaymentType());
+        saveBooking.setContactForMatch(futsal_Booking.getContactForMatch());
         Futsal_Booking savedBooking=futsalBookingServiceeRepository.save(saveBooking);
       return bookingDTOMappter.getBookingDTO(savedBooking);
     }
@@ -111,6 +117,35 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         futsalBookingServiceeRepository.save(booking);
         return true;
 
+    }
+
+    @Override
+    public List<BookingDTO> getListOfFutsalChallenge() {
+        List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findAll();
+        List<BookingDTO> bookingDTOS = new ArrayList<>();
+        for (Futsal_Booking data : futsalBooking) {
+//            getting booking dto mapper
+            BookingDTO bookingDTO=bookingDTOMappter.getBookingDTO(data);
+            System.out.println("user id:"+data.getChallenger_id().getId());
+//            get user dto mapper
+            Users user=usersServiceRepository.findById(data.getChallenger_id().getId()).orElseThrow(()-> new RuntimeException("User not found"));
+            UserDTO userDTO=userDTOMappter.getUserDTO(user);
+            System.out.println("futsal id:"+data.getFutsal_ground().getFutsal().getId());
+//            getting futsal dto mapper
+            Futsal futsal=futsalServiceRepository.findById(data.getFutsal_ground().getFutsal().getId()).orElseThrow(()-> new RuntimeException("futsal not found"));
+            FutsalDto futsalDto=futsalDTOMapper.getFutsalDto(futsal);
+            System.out.println("ground id"+data.getFutsal_ground().getId());
+//            get futsal ground dto mapper
+            Futsal_Ground futsal_ground=futsalGroundServiceRepository.findById(data.getFutsal_ground().getId()).orElseThrow(()->new RuntimeException("ground not found"));
+            FutsalGroundDTO futsalGroundDTO=futsalGroundDTOMapper.groundDTO(futsal_ground);
+            futsalGroundDTO.setFutsalDto(futsalDto);
+//            setting up booking dto mapper
+            bookingDTO.setFutsalGroundDTO(futsalGroundDTO);
+            bookingDTO.setChallengerDto(userDTO);
+            bookingDTOS.add(bookingDTO);
+
+        }
+        return bookingDTOS;
     }
 
 }

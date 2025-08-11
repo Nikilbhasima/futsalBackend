@@ -19,6 +19,10 @@ public class BookingDTO {
     private LocalTime ending_time;
     private LocalDate booking_date;
     private String status;
+    private String matchPaymentType;
+    private String contactForMatch;
+    private UserDTO challengerDto;
+    private UserDTO opponentDto;
     private FutsalGroundDTO futsalGroundDTO;
 
 
