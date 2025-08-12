@@ -13,21 +13,16 @@ import java.util.List;
 public class BookingDTOMappter {
 
     @Autowired
-    private UsersServiceRepository usersServiceRepository;
+  private UserDTOMappter userDTOMappter;
 
 
 
-    public  List<BookingDTO> getBookingDTOs(List<Futsal_Booking> bookings) {
-        BookingDTOMappter bookingDTOMappter=new BookingDTOMappter();
+    public List<BookingDTO> getBookingDTOs(List<Futsal_Booking> bookings) {
         List<BookingDTO> bookingDTOs = new ArrayList<>();
-        for (Futsal_Booking data: bookings) {
-            System.out.println("user id:"+data.getChallenger_id().getId());
-            System.out.println("ground id"+data.getFutsal_ground().getId());
-            System.out.println("futsal id:"+data.getFutsal_ground().getFutsal().getId());
-
-            bookingDTOs.add(bookingDTOMappter.getBookingDTO(data));
+        for (Futsal_Booking booking : bookings) {
+            bookingDTOs.add(this.getBookingDTO(booking));
         }
-        return  bookingDTOs;
+        return bookingDTOs;
     }
 
     public  BookingDTO getBookingDTO(Futsal_Booking bookingDTO) {
@@ -41,6 +36,15 @@ public class BookingDTOMappter {
         bookingDTO1.setStatus(bookingDTO.getStatus());
         bookingDTO1.setMatchPaymentType(bookingDTO.getMatchPaymentType());
         bookingDTO1.setContactForMatch(bookingDTO.getContactForMatch());
+        // Add null check for challenger
+        if (bookingDTO.getChallenger_id() != null) {
+            bookingDTO1.setChallengerDto(userDTOMappter.getUserDTO(bookingDTO.getChallenger_id()));
+        }
+
+        // Add null check for opponent - This was causing the error
+        if (bookingDTO.getOpponent_id() != null) {
+            bookingDTO1.setOpponentDto(userDTOMappter.getUserDTO(bookingDTO.getOpponent_id()));
+        }
 
         return bookingDTO1;
     }

@@ -69,6 +69,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         saveBooking.setMatchPaymentType(futsal_Booking.getMatchPaymentType());
         saveBooking.setContactForMatch(futsal_Booking.getContactForMatch());
         Futsal_Booking savedBooking=futsalBookingServiceeRepository.save(saveBooking);
+        System.out.println("calling dto mapper");
       return bookingDTOMappter.getBookingDTO(savedBooking);
     }
 
@@ -146,6 +147,16 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
         }
         return bookingDTOS;
+    }
+
+    @Override
+    public BookingDTO acceptChallenge(Authentication authentication, int bookindId) {
+        Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
+        Futsal_Booking futsal_booking=futsalBookingServiceeRepository.findById(bookindId).orElseThrow(()-> new RuntimeException("futsal booking not found"));
+        futsal_booking.setOpponent_id(users);
+        futsal_booking=futsalBookingServiceeRepository.save(futsal_booking);
+
+        return bookingDTOMappter.getBookingDTO(futsal_booking);
     }
 
 }

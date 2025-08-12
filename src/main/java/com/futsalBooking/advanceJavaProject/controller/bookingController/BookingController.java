@@ -24,8 +24,6 @@ public class BookingController {
     @PostMapping("/bookFutsal/{groundId}")
     public ResponseEntity<BookingDTO> bookFutsal(Authentication authentication, @RequestBody Futsal_Booking futsal_Booking, @PathVariable("groundId") int groundId) {
         System.out.println(futsal_Booking.getBookingType());
-        System.out.println(futsal_Booking.getStarting_time());
-        System.out.println(futsal_Booking.getEnding_time());
         if(futsal_Booking.getBookingType().equals("book")){
             BookingDTO bookingDTO = futsalBookingServiceImplementation.bookFutsal(authentication,futsal_Booking,groundId);
             return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
@@ -66,5 +64,10 @@ public class BookingController {
         List<BookingDTO> bookingDTOS= futsalBookingServiceImplementation.getListOfFutsalChallenge();
 
         return  ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
+    }
+@PostMapping("acceptChallenge/{bookingId}")
+    public ResponseEntity<BookingDTO> acceptChallenge(Authentication authentication, @PathVariable("bookingId") int bookingId){
+        BookingDTO bookingDTO= futsalBookingServiceImplementation.acceptChallenge(authentication,bookingId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
     }
 }
