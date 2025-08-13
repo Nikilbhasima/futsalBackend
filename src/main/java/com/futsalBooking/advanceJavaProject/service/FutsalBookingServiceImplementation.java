@@ -122,7 +122,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
     @Override
     public List<BookingDTO> getListOfFutsalChallenge() {
-        List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findAll();
+        List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findBookingByChallenge();
         List<BookingDTO> bookingDTOS = new ArrayList<>();
         for (Futsal_Booking data : futsalBooking) {
 //            getting booking dto mapper
@@ -151,6 +151,8 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
     @Override
     public BookingDTO acceptChallenge(Authentication authentication, int bookindId) {
+        System.out.println(("booking id "+bookindId));
+        System.out.println("user phone number:"+authentication.getName());
         Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
         Futsal_Booking futsal_booking=futsalBookingServiceeRepository.findById(bookindId).orElseThrow(()-> new RuntimeException("futsal booking not found"));
         futsal_booking.setOpponent_id(users);

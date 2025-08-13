@@ -38,8 +38,7 @@ public class BookingController {
 
     @GetMapping("/getFutsalSlot/{slotId}/{bookingDate}")
     public ResponseEntity<List<BookingDTO>> getSlot(@PathVariable("slotId") int slotId, @PathVariable("bookingDate") LocalDate bookingDate){
-        System.out.println("get futsal id "+slotId);
-        System.out.println("get futsal id "+bookingDate);
+
         List<BookingDTO> bookingDTOS= futsalBookingServiceImplementation.findBookingsByGroundId(slotId,bookingDate);
         return ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
     }
@@ -67,6 +66,7 @@ public class BookingController {
     }
 @PostMapping("acceptChallenge/{bookingId}")
     public ResponseEntity<BookingDTO> acceptChallenge(Authentication authentication, @PathVariable("bookingId") int bookingId){
+        System.out.println(("booking id "+bookingId));
         BookingDTO bookingDTO= futsalBookingServiceImplementation.acceptChallenge(authentication,bookingId);
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
     }

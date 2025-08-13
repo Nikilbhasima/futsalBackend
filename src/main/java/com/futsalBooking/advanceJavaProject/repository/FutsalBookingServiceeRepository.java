@@ -18,4 +18,7 @@ public interface FutsalBookingServiceeRepository extends JpaRepository<Futsal_Bo
 
     @Query("SELECT b FROM Futsal_Booking b WHERE b.challenger_id.id = :userId AND b.bookingType= :bookingType")
     List<Futsal_Booking> findByChallenger_id(@Param("userId") int userId,@Param("bookingType") String bookingType);
+
+    @Query("SELECT b FROM Futsal_Booking b WHERE b.bookingType = 'challenge'")
+    List<Futsal_Booking> findBookingByChallenge();
 }
