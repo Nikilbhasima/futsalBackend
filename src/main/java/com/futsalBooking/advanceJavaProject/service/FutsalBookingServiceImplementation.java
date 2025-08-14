@@ -122,9 +122,121 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
     @Override
     public List<BookingDTO> getListOfFutsalChallenge() {
+        LocalDate today = LocalDate.now();
         List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findBookingByChallenge();
+//        List<BookingDTO> bookingDTOS = new ArrayList<>();
+//        for (Futsal_Booking data : futsalBooking) {
+//            if (today.isAfter(data.getPlaying_date())) {
+//                data.setStatus("completed");
+//                data = futsalBookingServiceeRepository.save(data);
+//            }
+////            getting booking dto mapper
+//            BookingDTO bookingDTO=bookingDTOMappter.getBookingDTO(data);
+//            System.out.println("user id:"+data.getChallenger_id().getId());
+////            get user dto mapper
+//            Users user=usersServiceRepository.findById(data.getChallenger_id().getId()).orElseThrow(()-> new RuntimeException("User not found"));
+//            UserDTO userDTO=userDTOMappter.getUserDTO(user);
+//            System.out.println("futsal id:"+data.getFutsal_ground().getFutsal().getId());
+////            getting futsal dto mapper
+//            Futsal futsal=futsalServiceRepository.findById(data.getFutsal_ground().getFutsal().getId()).orElseThrow(()-> new RuntimeException("futsal not found"));
+//            FutsalDto futsalDto=futsalDTOMapper.getFutsalDto(futsal);
+//            System.out.println("ground id"+data.getFutsal_ground().getId());
+////            get futsal ground dto mapper
+//            Futsal_Ground futsal_ground=futsalGroundServiceRepository.findById(data.getFutsal_ground().getId()).orElseThrow(()->new RuntimeException("ground not found"));
+//            FutsalGroundDTO futsalGroundDTO=futsalGroundDTOMapper.groundDTO(futsal_ground);
+//            futsalGroundDTO.setFutsalDto(futsalDto);
+////            setting up booking dto mapper
+//            bookingDTO.setFutsalGroundDTO(futsalGroundDTO);
+//            bookingDTO.setChallengerDto(userDTO);
+//            bookingDTOS.add(bookingDTO);
+//
+//        }
+        return handleBookingDTOForChallenge(futsalBooking,today);
+    }
+
+    @Override
+    public BookingDTO acceptChallenge(Authentication authentication, int bookindId) {
+        System.out.println(("booking id "+bookindId));
+        System.out.println("user phone number:"+authentication.getName());
+        Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
+        Futsal_Booking futsal_booking=futsalBookingServiceeRepository.findById(bookindId).orElseThrow(()-> new RuntimeException("futsal booking not found"));
+        futsal_booking.setOpponent_id(users);
+        futsal_booking=futsalBookingServiceeRepository.save(futsal_booking);
+
+        return bookingDTOMappter.getBookingDTO(futsal_booking);
+    }
+
+    @Override
+    public List<BookingDTO> getMyFutsalChallenge(Authentication authentication) {
+        Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
+        List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findBookingByChallengerId(users.getId());
+        List<Futsal_Booking> futsalBookingsByOpponent=futsalBookingServiceeRepository.findBookingByOpponent(users.getId());
+        futsalBooking.addAll(futsalBookingsByOpponent);
+        LocalDate today = LocalDate.now();
+
+//        List<BookingDTO> bookingDTOS = new ArrayList<>();
+//        for (Futsal_Booking data : futsalBooking) {
+//            if (today.isAfter(data.getPlaying_date())) {
+//                data.setStatus("completed");
+//                data = futsalBookingServiceeRepository.save(data);
+//            }
+////            getting booking dto mapper
+//            BookingDTO bookingDTO=bookingDTOMappter.getBookingDTO(data);
+//            System.out.println("user id:"+data.getChallenger_id().getId());
+////            get user dto mapper
+//            Users user=usersServiceRepository.findById(data.getChallenger_id().getId()).orElseThrow(()-> new RuntimeException("User not found"));
+//            UserDTO userDTO=userDTOMappter.getUserDTO(user);
+//            System.out.println("futsal id:"+data.getFutsal_ground().getFutsal().getId());
+////            getting futsal dto mapper
+//            Futsal futsal=futsalServiceRepository.findById(data.getFutsal_ground().getFutsal().getId()).orElseThrow(()-> new RuntimeException("futsal not found"));
+//            FutsalDto futsalDto=futsalDTOMapper.getFutsalDto(futsal);
+//            System.out.println("ground id"+data.getFutsal_ground().getId());
+////            get futsal ground dto mapper
+//            Futsal_Ground futsal_ground=futsalGroundServiceRepository.findById(data.getFutsal_ground().getId()).orElseThrow(()->new RuntimeException("ground not found"));
+//            FutsalGroundDTO futsalGroundDTO=futsalGroundDTOMapper.groundDTO(futsal_ground);
+//            futsalGroundDTO.setFutsalDto(futsalDto);
+////            setting up booking dto mapper
+//            bookingDTO.setFutsalGroundDTO(futsalGroundDTO);
+//            bookingDTO.setChallengerDto(userDTO);
+//            bookingDTOS.add(bookingDTO);
+//
+//        }
+        return handleBookingDTOForChallenge(futsalBooking,today);
+    }
+
+    @Override
+    public boolean cancelFutsalChallenge(Authentication authentication, int groundId) {
+        String playerPhoneNumber = authentication.getName();
+
+        Optional<Futsal_Booking> bookingOpt = futsalBookingServiceeRepository.findById(groundId);
+        if (bookingOpt.isEmpty()) {
+            return false;
+        }
+
+        Futsal_Booking booking = bookingOpt.get();
+
+        // Only challenger can cancel
+        if (booking.getChallenger_id().getPhoneNumber().equals(playerPhoneNumber)) {
+            booking.setStatus("cancelled");
+        }
+
+        if(booking.getOpponent_id().getPhoneNumber().equals(playerPhoneNumber)) {
+            booking.setOpponent_id(null);
+        }
+
+        futsalBookingServiceeRepository.save(booking);
+        return true;
+    }
+
+
+
+    public  List<BookingDTO> handleBookingDTOForChallenge(List<Futsal_Booking> futsalBooking,LocalDate today){
         List<BookingDTO> bookingDTOS = new ArrayList<>();
         for (Futsal_Booking data : futsalBooking) {
+            if (today.isAfter(data.getPlaying_date())) {
+                data.setStatus("completed");
+                data = futsalBookingServiceeRepository.save(data);
+            }
 //            getting booking dto mapper
             BookingDTO bookingDTO=bookingDTOMappter.getBookingDTO(data);
             System.out.println("user id:"+data.getChallenger_id().getId());
@@ -146,19 +258,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
             bookingDTOS.add(bookingDTO);
 
         }
-        return bookingDTOS;
-    }
-
-    @Override
-    public BookingDTO acceptChallenge(Authentication authentication, int bookindId) {
-        System.out.println(("booking id "+bookindId));
-        System.out.println("user phone number:"+authentication.getName());
-        Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
-        Futsal_Booking futsal_booking=futsalBookingServiceeRepository.findById(bookindId).orElseThrow(()-> new RuntimeException("futsal booking not found"));
-        futsal_booking.setOpponent_id(users);
-        futsal_booking=futsalBookingServiceeRepository.save(futsal_booking);
-
-        return bookingDTOMappter.getBookingDTO(futsal_booking);
+        return  bookingDTOS;
     }
 
 }

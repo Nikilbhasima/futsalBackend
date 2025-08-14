@@ -64,10 +64,28 @@ public class BookingController {
 
         return  ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
     }
-@PostMapping("acceptChallenge/{bookingId}")
+
+    @PostMapping("acceptChallenge/{bookingId}")
     public ResponseEntity<BookingDTO> acceptChallenge(Authentication authentication, @PathVariable("bookingId") int bookingId){
-        System.out.println(("booking id "+bookingId));
         BookingDTO bookingDTO= futsalBookingServiceImplementation.acceptChallenge(authentication,bookingId);
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
     }
+
+    @GetMapping("/getMyChallenge")
+    public ResponseEntity<List<BookingDTO>> getMyChallenge(Authentication authentication){
+        List<BookingDTO> bookingDTOS=futsalBookingServiceImplementation.getMyFutsalChallenge(authentication);
+        return  ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
+    }
+
+    @DeleteMapping("/cancelFutsalChallenge/{challengeId}")
+    public ResponseEntity<String> cancelFutsalChallenge(Authentication authentication,@PathVariable("challengeId") int challengeId){
+        boolean value= futsalBookingServiceImplementation.cancelFutsalChallenge(authentication,challengeId);
+        if(value) {
+            return ResponseEntity.status(HttpStatus.OK).body("cancelled");
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed");
+        }
+
+    }
+
 }
