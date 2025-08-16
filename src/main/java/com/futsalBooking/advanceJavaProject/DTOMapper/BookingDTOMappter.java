@@ -26,7 +26,6 @@ public class BookingDTOMappter {
     }
 
     public  BookingDTO getBookingDTO(Futsal_Booking bookingDTO) {
-        System.out.println("DTO Mapper was called ");
         BookingDTO bookingDTO1 = new BookingDTO();
         bookingDTO1.setId(bookingDTO.getId());
         bookingDTO1.setPlaying_date(bookingDTO.getPlaying_date());
@@ -41,7 +40,6 @@ public class BookingDTOMappter {
         if (bookingDTO.getChallenger_id() != null) {
             bookingDTO1.setChallengerDto(userDTOMappter.getUserDTO(bookingDTO.getChallenger_id()));
         }
-
         // Add null check for opponent - This was causing the error
         if (bookingDTO.getOpponent_id() != null) {
             bookingDTO1.setOpponentDto(userDTOMappter.getUserDTO(bookingDTO.getOpponent_id()));

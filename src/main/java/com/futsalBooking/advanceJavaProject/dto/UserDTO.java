@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,4 +17,6 @@ public class UserDTO {
     private String email;
     private String phoneNumber;
     private String image;
+    private String address;
+    private List<BookingDTO> bookings;
 }

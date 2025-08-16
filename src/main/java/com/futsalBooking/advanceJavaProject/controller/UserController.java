@@ -1,12 +1,13 @@
 package com.futsalBooking.advanceJavaProject.controller;
 
+import com.futsalBooking.advanceJavaProject.dto.UserDTO;
 import com.futsalBooking.advanceJavaProject.model.Users;
 import com.futsalBooking.advanceJavaProject.service.UserServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -20,7 +21,14 @@ public class UserController {
     }
 
     @GetMapping("/getUser")
-    public Users getUsers(Authentication authentication) {
-        return userServiceImplementation.getUsers(authentication);
+    public ResponseEntity<UserDTO> getUsers(Authentication authentication) {
+        UserDTO userDTO=userServiceImplementation.getUsers(authentication);
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+    }
+
+    @PostMapping("/editUserDetails")
+    public ResponseEntity<Boolean> editUserDetails(Authentication authentication,@RequestBody Users users) {
+        boolean success = userServiceImplementation.editUserDetails(authentication, users);
+        return  ResponseEntity.status(HttpStatus.OK).body(success);
     }
 }

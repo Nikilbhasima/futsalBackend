@@ -14,6 +14,7 @@ public class UserDTOMappter {
         userDTO.setEmail(users.getEmail());
         userDTO.setImage(users.getImage());
         userDTO.setPhoneNumber(users.getPhoneNumber());
+        userDTO.setAddress(users.getAddress());
         return userDTO;
     }
 }

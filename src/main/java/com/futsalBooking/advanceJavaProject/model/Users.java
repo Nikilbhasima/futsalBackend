@@ -20,7 +20,7 @@ public class Users {
     private String phoneNumber;
     private String password;
     private String image;
-
+    private String address;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",joinColumns = {@JoinColumn(name = "user_id")},inverseJoinColumns = {
             @JoinColumn(name = "role_id")
