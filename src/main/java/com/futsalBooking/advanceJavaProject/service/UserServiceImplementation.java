@@ -4,6 +4,7 @@ import com.futsalBooking.advanceJavaProject.DTOMapper.BookingDTOMappter;
 import com.futsalBooking.advanceJavaProject.DTOMapper.UserDTOMappter;
 import com.futsalBooking.advanceJavaProject.dto.BookingDTO;
 import com.futsalBooking.advanceJavaProject.dto.FutsalDto;
+import com.futsalBooking.advanceJavaProject.dto.PasswordChangeRequest;
 import com.futsalBooking.advanceJavaProject.dto.UserDTO;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Booking;
 import com.futsalBooking.advanceJavaProject.model.Users;
@@ -11,6 +12,8 @@ import com.futsalBooking.advanceJavaProject.repository.FutsalBookingServiceeRepo
 import com.futsalBooking.advanceJavaProject.repository.UsersServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,6 +22,10 @@ import java.util.List;
 
 @Service
 public class UserServiceImplementation implements UserService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private UsersServiceRepository usersServiceRepository;
 
@@ -64,6 +71,17 @@ public class UserServiceImplementation implements UserService {
         return updatedUser.equals(users1);
     }
 
+    @Override
+    public boolean changePassword(Authentication authentication, PasswordChangeRequest passwordChangeRequest) {
+        Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
+        String userCurrentPassword=users.getPassword();
+        if (passwordEncoder.matches(passwordChangeRequest.getCurrentPassword(), userCurrentPassword)) {
+            users.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
+            usersServiceRepository.save(users);
+            return true;
+        }
+        return false;
+    }
 
 
     public List<BookingDTO> handleBookingDto(List<Futsal_Booking> futsalBooking) {

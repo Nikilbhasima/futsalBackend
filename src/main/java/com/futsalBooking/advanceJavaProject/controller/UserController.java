@@ -1,5 +1,6 @@
 package com.futsalBooking.advanceJavaProject.controller;
 
+import com.futsalBooking.advanceJavaProject.dto.PasswordChangeRequest;
 import com.futsalBooking.advanceJavaProject.dto.UserDTO;
 import com.futsalBooking.advanceJavaProject.model.Users;
 import com.futsalBooking.advanceJavaProject.service.UserServiceImplementation;
@@ -30,5 +31,17 @@ public class UserController {
     public ResponseEntity<Boolean> editUserDetails(Authentication authentication,@RequestBody Users users) {
         boolean success = userServiceImplementation.editUserDetails(authentication, users);
         return  ResponseEntity.status(HttpStatus.OK).body(success);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(Authentication authentication, @RequestBody PasswordChangeRequest passwordChangeRequest){
+
+        boolean success = userServiceImplementation.changePassword(authentication, passwordChangeRequest);
+        if(success){
+            return ResponseEntity.status(HttpStatus.OK).body("Password changed successfully");
+        }else {
+            return ResponseEntity.status(HttpStatus.OK).body("Password change failed");
+        }
+
     }
 }
