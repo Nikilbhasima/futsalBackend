@@ -13,4 +13,5 @@ public interface UserService {
 
     public boolean changePassword(Authentication authentication, PasswordChangeRequest passwordChangeRequest);
 
+    public boolean changePasswordOTP(PasswordChangeRequest passwordChangeRequest);
 }

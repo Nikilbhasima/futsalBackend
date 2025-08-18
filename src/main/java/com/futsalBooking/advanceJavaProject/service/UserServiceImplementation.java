@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -78,6 +79,17 @@ public class UserServiceImplementation implements UserService {
         if (passwordEncoder.matches(passwordChangeRequest.getCurrentPassword(), userCurrentPassword)) {
             users.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
             usersServiceRepository.save(users);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean changePasswordOTP(PasswordChangeRequest passwordChangeRequest) {
+        Optional<Users> users=usersServiceRepository.findByEmail(passwordChangeRequest.getEmail());
+        if (users.isPresent()) {
+            users.get().setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
+            usersServiceRepository.save(users.get());
             return true;
         }
         return false;

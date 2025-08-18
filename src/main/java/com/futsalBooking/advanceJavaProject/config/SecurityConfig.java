@@ -35,7 +35,10 @@ public class SecurityConfig {
                                 "/api/futsal/getAllFutsal",
                                 "/api/futsal/getFutsalById/**",
                                 "/api/bookings/getFutsalSlot/**",
-                                "/api/bookings/getListOfFutsalChallenge")
+                                "/api/bookings/getListOfFutsalChallenge",
+                                "/api/opt/generate/**",
+                                "/api/opt/validate/**",
+                                "/api/user/changePasswordFromOTP")
                         .permitAll()
                         .anyRequest().authenticated()
                 )

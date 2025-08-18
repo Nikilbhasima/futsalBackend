@@ -40,7 +40,18 @@ public class UserController {
         if(success){
             return ResponseEntity.status(HttpStatus.OK).body("Password changed successfully");
         }else {
-            return ResponseEntity.status(HttpStatus.OK).body("Password change failed");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password change failed");
+        }
+    }
+
+    @PostMapping("/changePasswordFromOTP")
+    public ResponseEntity<String> changePasswordFromOTP(@RequestBody PasswordChangeRequest passwordChangeRequest){
+
+        boolean value=userServiceImplementation.changePasswordOTP(passwordChangeRequest);
+        if(value){
+            return ResponseEntity.status(HttpStatus.OK).body("Password changed successfully");
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password change failed");
         }
 
     }

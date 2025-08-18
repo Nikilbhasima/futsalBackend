@@ -51,8 +51,12 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
     @Autowired
     private FutsalDTOMapper futsalDTOMapper;
+
     @Autowired
     private UserDTOMappter userDTOMappter;
+
+    @Autowired
+    private EmailService emailService;
 
     public BookingDTO bookFutsal(Authentication authentication, Futsal_Booking futsal_Booking, int groundId) {
         Users user=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("User not found"));
@@ -69,8 +73,10 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         saveBooking.setMatchPaymentType(futsal_Booking.getMatchPaymentType());
         saveBooking.setContactForMatch(futsal_Booking.getContactForMatch());
         Futsal_Booking savedBooking=futsalBookingServiceeRepository.save(saveBooking);
-        System.out.println("calling dto mapper");
-      return bookingDTOMappter.getBookingDTO(savedBooking);
+
+        emailService.sendBookingConfirmationEmail(user.getEmail(), String.valueOf(futsal_Booking.getPlaying_date()));
+
+        return bookingDTOMappter.getBookingDTO(savedBooking);
     }
 
 
@@ -103,7 +109,6 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
             bookingDTOS.add(dto);
             System.out.println("booking id " + booking.getId() + ":" + booking.getBooking_date() + " booking status:" + booking.getStatus());
         }
-
         return bookingDTOS;
     }
 
