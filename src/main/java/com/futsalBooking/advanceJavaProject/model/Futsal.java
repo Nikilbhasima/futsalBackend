@@ -19,6 +19,7 @@
         private String description;
         private String futsalOpeningHours;
         private String futsalClosingHours;
+        private String futsalLogo;
 
 
         @OneToMany(mappedBy = "futsal" , cascade = CascadeType.ALL)

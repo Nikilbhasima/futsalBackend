@@ -35,6 +35,7 @@ public class FutsalServiceImplementation implements FutsalService {
         newFutsal.setDescription(futsal.getDescription());
         newFutsal.setFutsalOpeningHours(futsal.getFutsalOpeningHours());
         newFutsal.setFutsalClosingHours(futsal.getFutsalClosingHours());
+        newFutsal.setFutsalLogo(futsal.getFutsalLogo());
 
         Users user = usersServiceRepository.findByPhoneNumber(authentication.getName())
                 .orElseThrow();
@@ -52,7 +53,11 @@ public class FutsalServiceImplementation implements FutsalService {
     public FutsalDto getFutsal(Authentication authentication) {
         Users user = usersServiceRepository.findByPhoneNumber(authentication.getName())
                 .orElseThrow();
-        return futsalDTOMapper.mapFutsalDto(user.getFutsal());
+        if (user.getFutsal()!=null){
+            return futsalDTOMapper.mapFutsalDto(user.getFutsal());
+
+        }
+        return  null;
     }
 
     @Override
@@ -69,5 +74,37 @@ public class FutsalServiceImplementation implements FutsalService {
 
         return futsalDTOMapper.getFutsalDtoList(futsalList);
     }
+
+    @Override
+    public FutsalDto editFutsalDetail(Futsal futsal, Authentication authentication) {
+        Users users = usersServiceRepository.findByPhoneNumber(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found with phone: " + authentication.getName()));
+
+        Futsal newFutsal = Optional.ofNullable(users.getFutsal())
+                .orElseThrow(() -> new RuntimeException("Futsal not found for this user"));
+
+        if (futsal.getFutsalName() != null) {
+            newFutsal.setFutsalName(futsal.getFutsalName());
+        }
+        if (futsal.getFutsalAddress() != null) {
+            newFutsal.setFutsalAddress(futsal.getFutsalAddress());
+        }
+        if (futsal.getDescription() != null) {
+            newFutsal.setDescription(futsal.getDescription());
+        }
+        if (futsal.getFutsalLogo() != null) {
+            newFutsal.setFutsalLogo(futsal.getFutsalLogo());
+        }
+        if (futsal.getFutsalOpeningHours() != null) {
+            newFutsal.setFutsalOpeningHours(futsal.getFutsalOpeningHours());
+        }
+        if (futsal.getFutsalClosingHours() != null) {
+            newFutsal.setFutsalClosingHours(futsal.getFutsalClosingHours());
+        }
+
+        newFutsal = futsalServiceRepository.save(newFutsal);
+        return futsalDTOMapper.getFutsalDto(newFutsal);
+    }
+
 
 }

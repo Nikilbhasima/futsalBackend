@@ -15,4 +15,6 @@ public interface FutsalService {
     public FutsalDto getFutsalById(int id);
 
     public List<FutsalDto> getAllFutsalList();
+
+    public FutsalDto editFutsalDetail(Futsal futsal, Authentication authentication);
 }

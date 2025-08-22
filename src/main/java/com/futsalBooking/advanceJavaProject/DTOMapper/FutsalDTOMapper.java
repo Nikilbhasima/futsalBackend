@@ -36,6 +36,8 @@ public class FutsalDTOMapper {
         futsalDto.setFutsalOpeningHours(futsal.getFutsalOpeningHours());
         futsalDto.setFutsalClosingHours(futsal.getFutsalClosingHours());
         futsalDto.setDescription(futsal.getDescription());
+        futsalDto.setFutsalLogo(futsal.getFutsalLogo());
+
 
         if(futsal.getFutsalGroundList() != null && !futsal.getFutsalGroundList().isEmpty()){
             List<FutsalGroundDTO> futsalGroundDTOList = new ArrayList<>();

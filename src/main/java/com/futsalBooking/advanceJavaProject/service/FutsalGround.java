@@ -10,4 +10,6 @@ public interface FutsalGround {
     public FutsalGroundDTO add(Futsal_Ground futsal_Ground, Authentication authentication);
 
     public List<FutsalGroundDTO> getFutsalGroundList(Authentication authentication);
+
+    public FutsalGroundDTO editGroundDetail(Futsal_Ground futsal_Ground,Authentication authentication);
 }

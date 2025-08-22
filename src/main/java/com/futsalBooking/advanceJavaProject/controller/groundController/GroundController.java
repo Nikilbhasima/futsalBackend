@@ -2,6 +2,7 @@ package com.futsalBooking.advanceJavaProject.controller.groundController;
 
 import com.futsalBooking.advanceJavaProject.dto.FutsalDto;
 import com.futsalBooking.advanceJavaProject.dto.FutsalGroundDTO;
+import com.futsalBooking.advanceJavaProject.model.Futsal;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Ground;
 import com.futsalBooking.advanceJavaProject.service.FutsalGroundServiceImplementation;
 import com.futsalBooking.advanceJavaProject.service.FutsalServiceImplementation;
@@ -29,8 +30,21 @@ public class GroundController {
 
     @GetMapping("/getGround")
     public ResponseEntity<List<FutsalGroundDTO>> getGround(Authentication authentication){
+
         List<FutsalGroundDTO> futsalGroundDTO =futsalGroundServiceImplementation.getFutsalGroundList(authentication);
-        return ResponseEntity.status(HttpStatus.CREATED).body(futsalGroundDTO);
+        if (futsalGroundDTO != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(futsalGroundDTO);
+
+        }else {
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+    }
+
+    @PostMapping("/editGroundDetail")
+    public ResponseEntity<FutsalGroundDTO> editGroundDetail(@RequestBody Futsal_Ground futsal_Ground,Authentication authentication){
+
+        FutsalGroundDTO groundDTO=futsalGroundServiceImplementation.editGroundDetail(futsal_Ground,authentication);
+        return ResponseEntity.status(HttpStatus.OK).body(groundDTO);
     }
 
 }

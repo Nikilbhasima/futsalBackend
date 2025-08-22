@@ -27,6 +27,10 @@ public class FutsalGroundServiceImplementation implements FutsalGround {
     private FutsalGroundServiceRepository futsalGroundServiceRepository;
     @Autowired
     private FutsalServiceRepository futsalServiceRepository;
+    @Autowired
+    private FutsalGroundDTOMapper futsalGroundDTOMapper;
+    @Autowired
+    private FutsalDTOMapper futsalDTOMapper;
 
 
     @Override
@@ -62,19 +66,53 @@ public class FutsalGroundServiceImplementation implements FutsalGround {
         Users user = usersServiceRepository.findByPhoneNumber(authentication.getName())
                 .orElseThrow();
 
-        List<Futsal_Ground> futsalGroundList=futsalGroundServiceRepository.findByFutsal_id(user.getFutsal().getId());
-        if (futsalGroundList != null) {
-            for (Futsal_Ground futsalGround : futsalGroundList) {
-                FutsalGroundDTOMapper mapper = new FutsalGroundDTOMapper();
-                FutsalDTOMapper futsalDTOMapper = new FutsalDTOMapper();
-                FutsalGroundDTO futsalGroundDTO=mapper.groundDTO(futsalGround);
-                futsalGroundDTO.setFutsalDto(futsalDTOMapper.getFutsalDto(user.getFutsal()));
-                futsalGroundDTOList.add(futsalGroundDTO);
+        // First check if futsal is null
+        if (user.getFutsal() != null && user.getFutsal().getId() != 0) {
+            List<Futsal_Ground> futsalGroundList =
+                    futsalGroundServiceRepository.findByFutsal_id(user.getFutsal().getId());
+
+            if (futsalGroundList != null) {
+                for (Futsal_Ground futsalGround : futsalGroundList) {
+                    FutsalGroundDTOMapper mapper = new FutsalGroundDTOMapper();
+                    FutsalDTOMapper futsalDTOMapper = new FutsalDTOMapper();
+                    FutsalGroundDTO futsalGroundDTO = mapper.groundDTO(futsalGround);
+                    futsalGroundDTO.setFutsalDto(futsalDTOMapper.getFutsalDto(user.getFutsal()));
+                    futsalGroundDTOList.add(futsalGroundDTO);
+                }
             }
+            return futsalGroundDTOList;
         }
 
-        return futsalGroundDTOList;
+        return null;
     }
+
+    @Override
+    public FutsalGroundDTO editGroundDetail(Futsal_Ground futsal_Ground, Authentication authentication) {
+        System.out.println("ground type: " + futsal_Ground.getGroundType());
+
+        Users users = usersServiceRepository.findByPhoneNumber(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Futsal_Ground futsal_ground = futsalGroundServiceRepository.findById(futsal_Ground.getId())
+                .orElseThrow(() -> new RuntimeException("Futsal_Ground not found"));
+
+        // ✅ update with new values from request
+        futsal_ground.setGroundType(futsal_Ground.getGroundType());
+        futsal_ground.setPricePerHour(futsal_Ground.getPricePerHour());
+        futsal_ground.setImage(futsal_Ground.getImage());
+        futsal_ground.setFutsal(users.getFutsal());
+
+        // save updated entity
+        futsal_ground = futsalGroundServiceRepository.save(futsal_ground);
+
+        // map to DTO
+        FutsalGroundDTO futsalGroundDTO = futsalGroundDTOMapper.groundDTO(futsal_ground);
+        FutsalDto futsalDto = futsalDTOMapper.getFutsalDto(users.getFutsal());
+        futsalGroundDTO.setFutsalDto(futsalDto);
+
+        return futsalGroundDTO;
+    }
+
 
 
 }

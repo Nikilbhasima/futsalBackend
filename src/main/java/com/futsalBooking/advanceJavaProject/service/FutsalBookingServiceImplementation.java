@@ -74,7 +74,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         saveBooking.setContactForMatch(futsal_Booking.getContactForMatch());
         Futsal_Booking savedBooking=futsalBookingServiceeRepository.save(saveBooking);
 
-        emailService.sendBookingConfirmationEmail(user.getEmail(), String.valueOf(futsal_Booking.getPlaying_date()));
+//        emailService.sendBookingConfirmationEmail(user.getEmail(), String.valueOf(futsal_Booking.getPlaying_date()));
 
         return bookingDTOMappter.getBookingDTO(savedBooking);
     }

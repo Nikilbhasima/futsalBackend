@@ -40,9 +40,14 @@ public class FutsalController {
     }
     @GetMapping("/getFutsalById/{futsalId}")
     public ResponseEntity<FutsalDto> getFutsal(@PathVariable("futsalId") int id){
-        System.out.println("get futsal id "+id);
         FutsalDto futsalDto = futsalServiceImplementation.getFutsalById(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(futsalDto);
+    }
+
+    @PostMapping("/editFutsalDetail")
+    public ResponseEntity<FutsalDto> editFutsalDetail(@RequestBody Futsal futsal, Authentication authentication){
+        FutsalDto futsalDto= futsalServiceImplementation.editFutsalDetail(futsal, authentication);
+        return ResponseEntity.status(HttpStatus.OK).body(futsalDto);
     }
 
 }
