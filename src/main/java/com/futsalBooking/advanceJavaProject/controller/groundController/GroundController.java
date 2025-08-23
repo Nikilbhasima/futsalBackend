@@ -36,7 +36,7 @@ public class GroundController {
             return ResponseEntity.status(HttpStatus.OK).body(futsalGroundDTO);
 
         }else {
-            return ResponseEntity.status(HttpStatus.OK).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 

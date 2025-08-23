@@ -81,7 +81,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
 
     public List<BookingDTO> findBookingsByGroundId(int groundId, LocalDate playingDate) {
-        System.out.println("get futsal id "+groundId+":"+playingDate);
+
         List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findBookingsByGroundId(groundId,playingDate);
         return bookingDTOMappter.getBookingDTOs(futsalBooking);
     }
@@ -179,33 +179,6 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         futsalBooking.addAll(futsalBookingsByOpponent);
         LocalDate today = LocalDate.now();
 
-//        List<BookingDTO> bookingDTOS = new ArrayList<>();
-//        for (Futsal_Booking data : futsalBooking) {
-//            if (today.isAfter(data.getPlaying_date())) {
-//                data.setStatus("completed");
-//                data = futsalBookingServiceeRepository.save(data);
-//            }
-////            getting booking dto mapper
-//            BookingDTO bookingDTO=bookingDTOMappter.getBookingDTO(data);
-//            System.out.println("user id:"+data.getChallenger_id().getId());
-////            get user dto mapper
-//            Users user=usersServiceRepository.findById(data.getChallenger_id().getId()).orElseThrow(()-> new RuntimeException("User not found"));
-//            UserDTO userDTO=userDTOMappter.getUserDTO(user);
-//            System.out.println("futsal id:"+data.getFutsal_ground().getFutsal().getId());
-////            getting futsal dto mapper
-//            Futsal futsal=futsalServiceRepository.findById(data.getFutsal_ground().getFutsal().getId()).orElseThrow(()-> new RuntimeException("futsal not found"));
-//            FutsalDto futsalDto=futsalDTOMapper.getFutsalDto(futsal);
-//            System.out.println("ground id"+data.getFutsal_ground().getId());
-////            get futsal ground dto mapper
-//            Futsal_Ground futsal_ground=futsalGroundServiceRepository.findById(data.getFutsal_ground().getId()).orElseThrow(()->new RuntimeException("ground not found"));
-//            FutsalGroundDTO futsalGroundDTO=futsalGroundDTOMapper.groundDTO(futsal_ground);
-//            futsalGroundDTO.setFutsalDto(futsalDto);
-////            setting up booking dto mapper
-//            bookingDTO.setFutsalGroundDTO(futsalGroundDTO);
-//            bookingDTO.setChallengerDto(userDTO);
-//            bookingDTOS.add(bookingDTO);
-//
-//        }
         return handleBookingDTOForChallenge(futsalBooking,today);
     }
 

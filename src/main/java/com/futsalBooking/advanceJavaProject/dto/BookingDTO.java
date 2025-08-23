@@ -23,6 +23,7 @@ public class BookingDTO {
     private String contactForMatch;
     private UserDTO challengerDto;
     private UserDTO opponentDto;
+    private String bookingType;
     private FutsalGroundDTO futsalGroundDTO;
 
 

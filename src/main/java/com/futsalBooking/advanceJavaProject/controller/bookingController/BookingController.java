@@ -40,6 +40,9 @@ public class BookingController {
     public ResponseEntity<List<BookingDTO>> getSlot(@PathVariable("slotId") int slotId, @PathVariable("bookingDate") LocalDate bookingDate){
 
         List<BookingDTO> bookingDTOS= futsalBookingServiceImplementation.findBookingsByGroundId(slotId,bookingDate);
+//        if (bookingDTOS.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        }
         return ResponseEntity.status(HttpStatus.OK).body(bookingDTOS);
     }
 
