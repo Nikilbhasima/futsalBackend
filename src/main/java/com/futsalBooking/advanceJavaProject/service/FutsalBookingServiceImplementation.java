@@ -8,6 +8,8 @@ import com.futsalBooking.advanceJavaProject.dto.BookingDTO;
 import com.futsalBooking.advanceJavaProject.dto.FutsalDto;
 import com.futsalBooking.advanceJavaProject.dto.FutsalGroundDTO;
 import com.futsalBooking.advanceJavaProject.dto.UserDTO;
+import com.futsalBooking.advanceJavaProject.enumFile.PaymentStatus;
+import com.futsalBooking.advanceJavaProject.enumFile.PaymentType;
 import com.futsalBooking.advanceJavaProject.model.Futsal;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Booking;
 import com.futsalBooking.advanceJavaProject.model.Futsal_Ground;
@@ -74,6 +76,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         saveBooking.setEnding_time(futsal_Booking.getEnding_time());
         saveBooking.setMatchPaymentType(futsal_Booking.getMatchPaymentType());
         saveBooking.setContactForMatch(futsal_Booking.getContactForMatch());
+        saveBooking.setPaymentStatus(PaymentStatus.PENDING);
         Futsal_Booking savedBooking=futsalBookingServiceeRepository.save(saveBooking);
 
 //        emailService.sendBookingConfirmationEmail(user.getEmail(), String.valueOf(futsal_Booking.getPlaying_date()));
@@ -223,6 +226,20 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         return true;
     }
 
+    @Override
+    public boolean updatePaymentPhysical(int bookingId) {
+        try {
+            Futsal_Booking futsal_booking = futsalBookingServiceeRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("futsal booking not found"));
+
+            futsal_booking.setPaymentStatus(PaymentStatus.PAID);
+            futsal_booking.setMatchPaymentType(PaymentType.CASH);
+            futsalBookingServiceeRepository.save(futsal_booking);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 
     public  List<BookingDTO> handleBookingDTOForChallenge(List<Futsal_Booking> futsalBooking,LocalDate today){

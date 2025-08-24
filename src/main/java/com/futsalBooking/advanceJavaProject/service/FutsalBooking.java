@@ -25,4 +25,6 @@ public interface FutsalBooking {
     public List<BookingDTO> getMyFutsalChallenge(Authentication authentication);
 
     public boolean cancelFutsalChallenge(Authentication authentication, int groundId);
+
+    public boolean updatePaymentPhysical(int bookingId);
 }

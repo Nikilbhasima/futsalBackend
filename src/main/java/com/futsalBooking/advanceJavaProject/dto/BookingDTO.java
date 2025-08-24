@@ -1,5 +1,7 @@
 package com.futsalBooking.advanceJavaProject.dto;
 
+import com.futsalBooking.advanceJavaProject.enumFile.PaymentStatus;
+import com.futsalBooking.advanceJavaProject.enumFile.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +21,13 @@ public class BookingDTO {
     private LocalTime ending_time;
     private LocalDate booking_date;
     private String status;
-    private String matchPaymentType;
+    private PaymentType matchPaymentType;
     private String contactForMatch;
     private UserDTO challengerDto;
     private UserDTO opponentDto;
     private String bookingType;
+    private PaymentStatus paymentStatus;
+
     private FutsalGroundDTO futsalGroundDTO;
 
 

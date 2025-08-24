@@ -37,6 +37,8 @@ public class BookingDTOMappter {
         bookingDTO1.setMatchPaymentType(bookingDTO.getMatchPaymentType());
         bookingDTO1.setContactForMatch(bookingDTO.getContactForMatch());
         bookingDTO1.setBookingType(bookingDTO.getBookingType());
+        bookingDTO1.setPaymentStatus(bookingDTO.getPaymentStatus());
+
         // Add null check for challenger
         if (bookingDTO.getChallenger_id() != null) {
             bookingDTO1.setChallengerDto(userDTOMappter.getUserDTO(bookingDTO.getChallenger_id()));

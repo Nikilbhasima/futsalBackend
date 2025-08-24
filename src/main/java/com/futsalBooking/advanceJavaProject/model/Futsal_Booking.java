@@ -1,5 +1,7 @@
 package com.futsalBooking.advanceJavaProject.model;
 
+import com.futsalBooking.advanceJavaProject.enumFile.PaymentStatus;
+import com.futsalBooking.advanceJavaProject.enumFile.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,9 +23,13 @@ public class Futsal_Booking {
     private LocalTime ending_time;
     private LocalDate booking_date;
     private String status;
-    private String matchPaymentType;
+    @Enumerated(EnumType.STRING)
+    private PaymentType matchPaymentType;
     private String contactForMatch;
     private String bookingType;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ground_id")

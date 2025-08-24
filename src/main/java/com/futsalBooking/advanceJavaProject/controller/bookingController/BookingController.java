@@ -23,7 +23,6 @@ public class BookingController {
 
     @PostMapping("/bookFutsal/{groundId}")
     public ResponseEntity<BookingDTO> bookFutsal(Authentication authentication, @RequestBody Futsal_Booking futsal_Booking, @PathVariable("groundId") int groundId) {
-        System.out.println(futsal_Booking.getBookingType());
         if(futsal_Booking.getBookingType().equals("book")){
             BookingDTO bookingDTO = futsalBookingServiceImplementation.bookFutsal(authentication,futsal_Booking,groundId);
             return ResponseEntity.status(HttpStatus.CREATED).body(bookingDTO);
@@ -89,4 +88,14 @@ public class BookingController {
 
     }
 
+    @PostMapping("/updatePhysicalPayment/{bookingId}")
+    public ResponseEntity<String> updatePhysicalPayment(@PathVariable("bookingId") int bookingId, Authentication authentication){
+        boolean value=futsalBookingServiceImplementation.updatePaymentPhysical(bookingId);
+        if(value){
+            return ResponseEntity.status(HttpStatus.CREATED).body("updated");
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed");
+        }
+
+    }
 }
