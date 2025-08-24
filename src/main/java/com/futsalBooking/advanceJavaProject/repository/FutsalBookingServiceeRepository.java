@@ -27,4 +27,20 @@ public interface FutsalBookingServiceeRepository extends JpaRepository<Futsal_Bo
 
     @Query("SELECT b FROM Futsal_Booking b WHERE b.opponent_id.id = :userId AND b.bookingType = 'challenge' ")
     List<Futsal_Booking> findBookingByOpponent(@Param("userId") int userId );
+
+
+    @Query("SELECT COUNT(b) FROM Futsal_Booking b " +
+            "WHERE b.playing_date = :date " +
+            "AND b.futsal_ground.futsal.id = :futsalId")
+    int countNumberOfBookingPerData(@Param("date") LocalDate date,
+                                    @Param("futsalId") int futsalId);
+
+    @Query("SELECT COUNT(b) FROM Futsal_Booking b " +
+            "WHERE b.status = :status " +
+            "AND b.futsal_ground.futsal.id = :futsalId " +
+            "AND b.playing_date BETWEEN :startDate AND :endDate")
+    int countDataForPieChart(@Param("startDate") LocalDate startDate,
+                             @Param("endDate") LocalDate endDate,
+                             @Param("status") String status,
+                             @Param("futsalId") int futsalId);
 }

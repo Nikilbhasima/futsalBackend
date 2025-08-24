@@ -41,7 +41,13 @@ public class JwtAuthService {
     private JwtService JwtService;
 
     public JwtAuthResponse register(AuthRegisterRequest request) {
-        System.out.println(request.getRole());
+        if (usersServiceRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Email is already registered");
+        }
+        if (usersServiceRepository.findByPhoneNumber(request.getPhoneNumber()).isPresent()) {
+            throw new RuntimeException("Phone number is already registered");
+        }
+
         Users user =new Users();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
@@ -86,13 +92,10 @@ public class JwtAuthService {
     }
 
     public JwtAuthResponse authenticate(JwtAuthRequest request) {
-        System.out.println("authenticate:"+request.getPassword());
-        System.out.println("authenticate:"+request.getEmailOrMobile());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmailOrMobile(), request.getPassword()));
         UserDetails userDetails = myUserDetailsService.loadUserByUsername(request.getEmailOrMobile());
 
         String token = jwtService.generateToken(userDetails);
-        System.out.println("the token is:"+token);
         return new JwtAuthResponse(token);
     }
 }

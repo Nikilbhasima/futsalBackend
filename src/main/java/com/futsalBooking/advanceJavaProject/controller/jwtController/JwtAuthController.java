@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-    @RestController
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
     @RequestMapping("/api/v1/auth")
     public class JwtAuthController {
 
@@ -13,8 +16,18 @@ import org.springframework.web.bind.annotation.*;
         private JwtAuthService jwtAuthService;
 
         @PostMapping("/register")
-        public ResponseEntity<JwtAuthResponse> register (@RequestBody AuthRegisterRequest request) {
-            return ResponseEntity.ok(jwtAuthService.register(request));
+        public ResponseEntity<?> register (@RequestBody AuthRegisterRequest request) {
+            try {
+                JwtAuthResponse response = jwtAuthService.register(request);
+                Map<String, Object> success = new HashMap<>();
+                success.put("message", "Registration successful");
+                success.put("token", response.getToken());
+                return ResponseEntity.ok(success);
+            } catch (RuntimeException ex) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", ex.getMessage());
+                return ResponseEntity.badRequest().body(error);
+            }
         }
 
         @PostMapping("/login")

@@ -24,6 +24,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,9 +83,36 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
 
     public List<BookingDTO> findBookingsByGroundId(int groundId, LocalDate playingDate) {
+        LocalTime now = LocalTime.now().withNano(0);
+        LocalDate today = LocalDate.now();
 
         List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findBookingsByGroundId(groundId,playingDate);
-        return bookingDTOMappter.getBookingDTOs(futsalBooking);
+
+        List<Futsal_Booking> updatedBookings = new ArrayList<>();
+
+        for (Futsal_Booking booking : futsalBooking) {
+            if (booking.getPlaying_date().isEqual(today)) {
+                LocalTime start = booking.getStarting_time();
+                LocalTime end = booking.getEnding_time();
+
+                if (now.isBefore(start)) {
+                    booking.setStatus("pending");
+                } else if (now.isAfter(start) && now.isBefore(end)) {
+                    booking.setStatus("playing");
+                } else if (now.isAfter(end)) {
+                    booking.setStatus("completed");
+                }
+                futsalBookingServiceeRepository.save(booking);
+
+
+            } else if (booking.getPlaying_date().isBefore(today)) {
+                booking.setStatus("completed");
+                futsalBookingServiceeRepository.save(booking);
+            }
+            updatedBookings.add(booking);
+        }
+
+        return bookingDTOMappter.getBookingDTOs(updatedBookings);
     }
 
     public List<BookingDTO> bookingByUserId(Authentication authentication, String bookingType) {
@@ -92,12 +121,27 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
         List<Futsal_Booking> futsalBookings = futsalBookingServiceeRepository.findByChallenger_id(user.getId(), bookingType);
         LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now().withNano(0);
         List<BookingDTO> bookingDTOS = new ArrayList<>();
 
         for (Futsal_Booking booking : futsalBookings) {
-            if (today.isAfter(booking.getPlaying_date())) {
+
+            if(booking.getPlaying_date().isEqual(today)) {
+                LocalTime start = booking.getStarting_time();
+                LocalTime end = booking.getEnding_time();
+
+                if (now.isBefore(start)) {
+                    booking.setStatus("pending");
+
+                } else if (now.isAfter(start) && now.isBefore(end)) {
+                    booking.setStatus("playing");
+                } else if (now.isAfter(end)) {
+                    booking.setStatus("completed");
+                }
+                futsalBookingServiceeRepository.save(booking);
+            } else if (booking.getPlaying_date().isBefore(today)) {
                 booking.setStatus("completed");
-                booking = futsalBookingServiceeRepository.save(booking);
+                futsalBookingServiceeRepository.save(booking);
             }
             Futsal_Ground ground=futsalGroundServiceRepository.findById(booking.getFutsal_ground().getId()).orElseThrow(()-> new RuntimeException("Ground not found"));
             FutsalGroundDTO futsalGroundDTO=futsalGroundDTOMapper.groundDTO(ground);
@@ -107,7 +151,6 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
             BookingDTO dto = bookingDTOMappter.getBookingDTO(booking);
             dto.setFutsalGroundDTO(futsalGroundDTO);
             bookingDTOS.add(dto);
-            System.out.println("booking id " + booking.getId() + ":" + booking.getBooking_date() + " booking status:" + booking.getStatus());
         }
         return bookingDTOS;
     }
@@ -129,33 +172,7 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
     public List<BookingDTO> getListOfFutsalChallenge() {
         LocalDate today = LocalDate.now();
         List<Futsal_Booking> futsalBooking= futsalBookingServiceeRepository.findBookingByChallenge();
-//        List<BookingDTO> bookingDTOS = new ArrayList<>();
-//        for (Futsal_Booking data : futsalBooking) {
-//            if (today.isAfter(data.getPlaying_date())) {
-//                data.setStatus("completed");
-//                data = futsalBookingServiceeRepository.save(data);
-//            }
-////            getting booking dto mapper
-//            BookingDTO bookingDTO=bookingDTOMappter.getBookingDTO(data);
-//            System.out.println("user id:"+data.getChallenger_id().getId());
-////            get user dto mapper
-//            Users user=usersServiceRepository.findById(data.getChallenger_id().getId()).orElseThrow(()-> new RuntimeException("User not found"));
-//            UserDTO userDTO=userDTOMappter.getUserDTO(user);
-//            System.out.println("futsal id:"+data.getFutsal_ground().getFutsal().getId());
-////            getting futsal dto mapper
-//            Futsal futsal=futsalServiceRepository.findById(data.getFutsal_ground().getFutsal().getId()).orElseThrow(()-> new RuntimeException("futsal not found"));
-//            FutsalDto futsalDto=futsalDTOMapper.getFutsalDto(futsal);
-//            System.out.println("ground id"+data.getFutsal_ground().getId());
-////            get futsal ground dto mapper
-//            Futsal_Ground futsal_ground=futsalGroundServiceRepository.findById(data.getFutsal_ground().getId()).orElseThrow(()->new RuntimeException("ground not found"));
-//            FutsalGroundDTO futsalGroundDTO=futsalGroundDTOMapper.groundDTO(futsal_ground);
-//            futsalGroundDTO.setFutsalDto(futsalDto);
-////            setting up booking dto mapper
-//            bookingDTO.setFutsalGroundDTO(futsalGroundDTO);
-//            bookingDTO.setChallengerDto(userDTO);
-//            bookingDTOS.add(bookingDTO);
-//
-//        }
+
         return handleBookingDTOForChallenge(futsalBooking,today);
     }
 
