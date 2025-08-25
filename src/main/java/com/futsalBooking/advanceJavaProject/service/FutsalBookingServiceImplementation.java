@@ -97,15 +97,17 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
             if (booking.getPlaying_date().isEqual(today)) {
                 LocalTime start = booking.getStarting_time();
                 LocalTime end = booking.getEnding_time();
-
-                if (now.isBefore(start)) {
-                    booking.setStatus("pending");
-                } else if (now.isAfter(start) && now.isBefore(end)) {
-                    booking.setStatus("playing");
-                } else if (now.isAfter(end)) {
-                    booking.setStatus("completed");
+                if(!"cancelled".equals(booking.getStatus())){
+                    if (now.isBefore(start)) {
+                        booking.setStatus("pending");
+                    } else if (now.isAfter(start) && now.isBefore(end)) {
+                        booking.setStatus("playing");
+                    } else if (now.isAfter(end)) {
+                        booking.setStatus("completed");
+                    }
+                    futsalBookingServiceeRepository.save(booking);
                 }
-                futsalBookingServiceeRepository.save(booking);
+
 
 
             } else if (booking.getPlaying_date().isBefore(today)) {
@@ -133,15 +135,17 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
                 LocalTime start = booking.getStarting_time();
                 LocalTime end = booking.getEnding_time();
 
-                if (now.isBefore(start)) {
-                    booking.setStatus("pending");
-
-                } else if (now.isAfter(start) && now.isBefore(end)) {
-                    booking.setStatus("playing");
-                } else if (now.isAfter(end)) {
-                    booking.setStatus("completed");
+                if(!"cancelled".equals(booking.getStatus())){
+                    if (now.isBefore(start)) {
+                        booking.setStatus("pending");
+                    } else if (now.isAfter(start) && now.isBefore(end)) {
+                        booking.setStatus("playing");
+                    } else if (now.isAfter(end)) {
+                        booking.setStatus("completed");
+                    }
+                    futsalBookingServiceeRepository.save(booking);
                 }
-                futsalBookingServiceeRepository.save(booking);
+
             } else if (booking.getPlaying_date().isBefore(today)) {
                 booking.setStatus("completed");
                 futsalBookingServiceeRepository.save(booking);
@@ -160,11 +164,14 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
     @Override
     public boolean cancelFutsalBooking(int groundId) {
+
         Optional<Futsal_Booking> bookingOpt = futsalBookingServiceeRepository.findById(groundId);
         if(bookingOpt.isEmpty()){
             return false;
         }
+
         Futsal_Booking booking = bookingOpt.get();
+
         booking.setStatus("cancelled");
         futsalBookingServiceeRepository.save(booking);
         return true;
@@ -204,6 +211,8 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
 
     @Override
     public boolean cancelFutsalChallenge(Authentication authentication, int groundId) {
+        System.out.println("Booking id "+groundId);
+        System.out.println("user phone number:"+authentication.getName());
         String playerPhoneNumber = authentication.getName();
 
         Optional<Futsal_Booking> bookingOpt = futsalBookingServiceeRepository.findById(groundId);

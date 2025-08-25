@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface FutsalBookingServiceeRepository extends JpaRepository<Futsal_Booking,Integer> {
-    @Query("SELECT b FROM Futsal_Booking b WHERE b.futsal_ground.id = :groundId AND b.playing_date = :playingDate")
+    @Query("SELECT b FROM Futsal_Booking b WHERE b.futsal_ground.id = :groundId AND b.playing_date = :playingDate  AND b.status != 'cancelled'")
     List<Futsal_Booking> findBookingsByGroundId(@Param("groundId") int groundId, @Param("playingDate") LocalDate playingDate);
 
     @Query("SELECT b FROM Futsal_Booking b WHERE b.challenger_id.id = :userId AND b.bookingType= :bookingType")
