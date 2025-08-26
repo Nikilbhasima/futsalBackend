@@ -43,4 +43,39 @@ public interface FutsalBookingServiceeRepository extends JpaRepository<Futsal_Bo
                              @Param("endDate") LocalDate endDate,
                              @Param("status") String status,
                              @Param("futsalId") int futsalId);
+
+    @Query("SELECT COUNT(b) from Futsal_Booking b WHERE b.challenger_id.id = :userId ")
+    int findNumberOfBooking(@Param("userId") int userId);
+
+    @Query("SELECT COUNT(b) from Futsal_Booking b WHERE b.challenger_id.id = :userId AND b.bookingType = 'challenge'")
+    int findNumberOfChallenge(@Param("userId") int userId);
+
+    @Query("SELECT COUNT(b) from Futsal_Booking b WHERE b.challenger_id.id = :userId AND b.status = 'cancelled'")
+    int findNumberOfCancel(@Param("userId") int userId);
+
+    @Query("SELECT COUNT(b) " +
+            "FROM Futsal_Booking b " +
+            "JOIN b.futsal_ground g " +
+            "JOIN g.futsal f " +
+            "JOIN Users u ON f.id = u.futsal.id " +
+            "WHERE u.id = :userId")
+    int findNumberOfFutsalBooking(@Param("userId") int userId);
+
+    @Query("SELECT COUNT(b) " +
+            "FROM Futsal_Booking b " +
+            "JOIN b.futsal_ground g " +
+            "JOIN g.futsal f " +
+            "JOIN Users u ON f.id = u.futsal.id " +
+            "WHERE u.id = :userId AND b.playing_date = :today")
+    int numberOfTodaysBooking(@Param("userId") int userId,
+                               @Param("today") LocalDate today);
+
+    @Query("SELECT COUNT(b) " +
+            "FROM Futsal_Booking b " +
+            "JOIN b.futsal_ground g " +
+            "JOIN g.futsal f " +
+            "JOIN Users u ON f.id = u.futsal.id " +
+            "WHERE u.id = :userId AND b.status = :pending")
+    int numberOfQueue(@Param("userId") int userId,
+                       @Param("pending") String pending);
 }

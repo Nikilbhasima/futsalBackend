@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/bookings")
@@ -97,5 +98,18 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed");
         }
 
+    }
+
+    @GetMapping("/getUserBookingsNumbers")
+    public ResponseEntity<Map<String,Integer>> getUserBookingsNumbers(Authentication authentication){
+        Map<String, Integer> data = futsalBookingServiceImplementation.getUserBookingsNumbers(authentication);
+
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/getDataForAdmin")
+    public ResponseEntity<Map<String,Integer>> getDataForAdmin(Authentication authentication){
+        Map<String,Integer> data= futsalBookingServiceImplementation.getDataForAdmin(authentication);
+        return  ResponseEntity.ok(data);
     }
 }

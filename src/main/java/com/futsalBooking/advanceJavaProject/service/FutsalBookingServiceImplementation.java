@@ -28,9 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FutsalBookingServiceImplementation implements FutsalBooking {
@@ -279,4 +277,34 @@ public class FutsalBookingServiceImplementation implements FutsalBooking {
         return  bookingDTOS;
     }
 
+    public Map<String,Integer> getUserBookingsNumbers(Authentication authentication){
+        Map<String,Integer> userBookingsNumbers = new HashMap<>();
+
+        Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("user not found"));
+
+        int numberOfBookings=futsalBookingServiceeRepository.findNumberOfBooking(users.getId());
+        int numberOfChallenge= futsalBookingServiceeRepository.findNumberOfChallenge(users.getId());
+        int numberOfCancel=futsalBookingServiceeRepository.findNumberOfCancel(users.getId());
+
+        userBookingsNumbers.put("Booked",numberOfBookings);
+        userBookingsNumbers.put("Challenged",numberOfChallenge);
+        userBookingsNumbers.put("Canceled",numberOfCancel);
+
+
+        return userBookingsNumbers;
+    }
+
+    public Map<String,Integer> getDataForAdmin(Authentication authentication){
+        Users users=usersServiceRepository.findByPhoneNumber(authentication.getName()).orElseThrow(()-> new RuntimeException("user not found"));
+        Map<String,Integer> userBookingsNumbers = new HashMap<>();
+        LocalDate today = LocalDate.now();
+        int numberOfBookings=futsalBookingServiceeRepository.findNumberOfFutsalBooking(users.getId());
+        int todaysGame=futsalBookingServiceeRepository.numberOfTodaysBooking(users.getId(),today);
+        int numberOfQueue=futsalBookingServiceeRepository.numberOfQueue(users.getId(),"pending");
+
+        userBookingsNumbers.put("Total",numberOfBookings);
+        userBookingsNumbers.put("Pending",numberOfQueue);
+        userBookingsNumbers.put("Todays",todaysGame);
+        return userBookingsNumbers;
+    }
 }
